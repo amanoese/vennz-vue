@@ -1,5 +1,5 @@
 {
-  "name": "vennz",
+  "name": "vennz-vue",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +9,13 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "jest": "^24.9.0",
     "vue": "^2.6.10"
   },
   "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.6.0",
+    "@babel/preset-env": "^7.6.2",
     "@vue/cli-plugin-babel": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.11.0",
     "@vue/cli-service": "^3.11.0",

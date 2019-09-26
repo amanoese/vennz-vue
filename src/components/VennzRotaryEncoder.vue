@@ -9,7 +9,7 @@
 </template>
 <script>
 /*eslint no-console: "off"*/
-import vennzREM from '@/components/VennzRotaryEncoderModule.js'
+import vennzREM from '@/scripts/VennzRotaryEncoderModule.js'
 
 export default {
   data(){

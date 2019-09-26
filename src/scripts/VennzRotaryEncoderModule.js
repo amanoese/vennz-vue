@@ -1,18 +1,19 @@
 /*eslint no-console: "off"*/
 let _2PI = Math.PI*2
 
-export default {
+module.exports = {
   min_t : (1/(Math.PI*100)),
   r_size : 500,
   r_cycle(n,i,t) {
-    return -1 * ((i <= 1) ? Math.sin(t) : Math.cos(2**(i-2)*t)) * (1 - (i/(n+1))) + 1
+    let diff = (i <= 1) ? Math.sin(t) : Math.cos(2**(i-2)*t);
+    return (-1 * diff * (1 - (i/(n+1))) + 1);
   },
   calc (n,i,t) {
     let {r_cycle} = this
     return [ r_cycle(n,i,t) * Math.sin(t),r_cycle(n,i,t) * Math.cos(t)]
   },
   color(t,max=255) {
-    let InRange = value => Math.max(0,Math.min(255,parseInt(value)))
+    let InRange = value => Math.max(0,Math.min(255,Math.round(value)))
     let _1_3_PI = Math.PI/3;
     let dt_color = max/_1_3_PI
 
@@ -24,6 +25,9 @@ export default {
     //console.log(dt_color,_R,_G,_B)
     let [R,G,B] = [_R,_G,_B].map(InRange)
     return {R,G,B}
+  },
+  getColor(number=1,divisionNumber=3,colorCodeMaxValue=255){
+    return this.color(number*_2PI/divisionNumber,colorCodeMaxValue)
   },
   svg(n=3){
     let { min_t,r_size } = this
