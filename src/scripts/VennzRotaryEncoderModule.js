@@ -10,7 +10,47 @@ module.exports = {
   },
   calc (n,i,t) {
     let {r_cycle} = this
-    return [ r_cycle(n,i,t) * Math.sin(t),r_cycle(n,i,t) * Math.cos(t)]
+    return [ r_cycle(n,i,t) * Math.cos(t),r_cycle(n,i,t) * Math.sin(t)]
+  },
+  posCalc() {
+    let n = 7
+    let oneHot = [ ...'1111100' ]
+    let inside  = oneHot.map((v,index)=> +v > 0 ? index + 1 : null).filter(v=>v)
+    let outside = oneHot.map((v,index)=> +v < 1 ? index + 1 : null).filter(v=>v)
+    console.log(inside,outside)
+
+    let allList = []
+    let list = []
+
+    let isRange = (r,t) => {
+      for(let i of inside){
+        if( !isRange || this.r_cycle(n,i,t) < r ){
+          return false;
+        }
+      }
+      for(let i of outside){
+        if( !isRange || this.r_cycle(n,i,t) > r ){
+          return false;
+        }
+      }
+      return true;
+    }
+
+    for(let m=0; m < 2**10; m++){
+      let x = Math.random() * 4 - 2
+      let y = Math.random() * 4 - 2
+      let r = Math.sqrt(x**2 + y**2)
+      let t = Math.atan2(y,x)
+
+      if(isRange(r,t)) { list.push([x,y]) }
+      allList.push([x,y])
+    }
+    let mean_x = list.reduce((s,tuple)=>s+tuple[0],0) / list.length
+    let mean_y = list.reduce((s,tuple)=>s+tuple[1],0) / list.length
+    let [__,near_x,near_y] = list.map(([x,y])=>[(x-mean_x)**2 +(y-mean_y)**2, x, y]).sort((a,b)=>a[0]<b[0]? -1: 1)[0] || [NaN,NaN,NaN]
+
+    let [x,y] = isRange(Math.sqrt(mean_x**2 + mean_y**2),Math.atan2(mean_y,mean_x)) ?  [mean_x,mean_y] : [near_x,near_y]
+    return [x,y,list,allList]
   },
   color(t,max=255) {
     let InRange = value => Math.max(0,Math.min(255,Math.round(value)))
