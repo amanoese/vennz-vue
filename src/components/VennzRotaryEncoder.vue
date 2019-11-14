@@ -1,11 +1,25 @@
 <template>
   <div>
     <svg :height="r_size*2" :width="r_size*2">
-      <svg v-html="circle"></svg>
-      <!--<circle :cx="r_size" :cy="r_size" :r="r_size/2" fill="none" stroke="black"/>-->
+      <svg>
+        <polygon
+          v-for="(circle,i) in circles"
+          :key="i.toString()"
+          :data-n="i"
+          :stroke="circle.color"
+          :fill="circle.colorA"
+          :points="circle.points"
+          stroke-width="1"></polygon>
+      </svg>
       <circle :cx="target.x" :cy="target.y" r="8" fill="white" stroke="black"/>
-      <circle v-for="[x,y] in allList" :cx="x" :cy="y" r="1" fill="black" stroke="black"/>
-      <circle v-for="[x,y] in inList" :cx="x" :cy="y" r="2" fill="red" stroke="red"/>
+      <template v-if="isDebug">
+        <circle :cx="mean.x" :cy="mean.y" r="4" fill="white" stroke="red"/>
+        <circle :cx="near.x" :cy="near.y" r="4" fill="white" stroke="blue"/>
+        <circle :cx="cross.x" :cy="cross.y" r="4" fill="white" stroke="green"/>
+        <circle :cx="r_size" :cy="r_size" :r="r_size/2" fill="none" stroke="black"/>
+        <circle v-for="(pos,i) in allList" :key="+i+1" :cx="pos[0]" :cy="pos[1]" r="1" fill="black" stroke="black"/>
+        <circle v-for="(pos,i) in inList"  :key="-i-1" :cx="pos[0]" :cy="pos[1]" r="2" fill="red" stroke="red"/>
+      </template>
     </svg>
   </div>
 </template>
@@ -14,38 +28,95 @@
 import vennzREM from '@/scripts/VennzRotaryEncoderModule.js'
 
 export default {
+  props : {
+    r_size : {
+      default:500
+    },
+    setList: {
+      default: Array.from({length:7})
+    },
+    targetKeys: {
+      default: []
+    },
+    isDebug: {
+      default: false
+    },
+  },
   data(){
     return {
-      r_size : 500,
-      circle : '',
-      target : {
-        x : 125,
-        y : 125,
-      },
-      inList :  [[0,0]],
-      allList : [[0,0]]
+      circles : [],
+      inList :  [],
+      allList : [],
+      mean: {},
+      near: {},
+      cross: {},
     }
   },
-  created(){
-    let n = 7
-    let { r_size } = this
-    let rad = parseInt([ ...'1111100' ].reduce((s,v)=> s + '' + (s & 1 ^ v)),2)
-    let d_rad = (2 * Math.PI) / (2**n)
+  mounted(){
+    this.renderCircles()
+  },
+  methods : {
+    renderCircles(){
+      vennzREM.r_size = this.r_size
+      this.circles = vennzREM.svgCircles(this.setList.length)
+    },
+    readDebugData({ inList, allList, mean, near, cross }){
+      let r_size = this.r_size
 
-    let [_maybeX,_maybeY,inList,allList] = vennzREM.posCalc()
-    console.log(_maybeX,_maybeY,allList,inList)
+      this.allList = allList.map(tuple=>tuple.map(v=>+v*(r_size/2)+r_size))
+      this.inList = inList.map(tuple=>tuple.map(v=>+v*(r_size/2)+r_size))
 
-    this.allList = allList.map(tuple=>tuple.map(v=>+v*(r_size/2)+r_size))
-    this.inList = inList.map(tuple=>tuple.map(v=>+v*(r_size/2)+r_size))
+      let _mean = mean.map(v=>+v*(r_size/2)+r_size)
+      this.mean = {x : _mean[0], y: _mean[1] };
 
-    let [maybeX,maybeY] = [_maybeX,_maybeY].map(v=>(+v*(r_size/2))+r_size)
-    console.log(_maybeX,_maybeY)
-    console.log(maybeX,maybeY)
-    this.target.x = maybeX || r_size + (r_size/2 + (r_size/2/2/2/n)) * Math.cos(rad * d_rad + (d_rad/2))
-    this.target.y = maybeY || r_size + (r_size/2 + (r_size/2/2/2/n)) * Math.sin(rad * d_rad + (d_rad/2))
+      let _near = near.map(v=>+v*(r_size/2)+r_size)
+      this.near = {x : _near[0], y: _near[1] };
 
-    vennzREM.r_size = r_size
-    this.circle = vennzREM.svg(n)
+      let _cross = cross.map(v=>+v*(r_size/2)+r_size)
+      this.cross = {x : _cross[0], y: _cross[1] };
+    }
+  },
+  watch : {
+    r_size() {
+      this.renderCircles()
+    },
+    setList() {
+      this.renderCircles()
+    },
+    vennzREMdata(data){
+      this.readDebugData(data)
+    },
+    isDebug(){
+      this.readDebugData(this.vennzREMdata)
+    }
+  },
+  computed : {
+    targetHotString(){
+      return this.setList.map(key=>{
+        return this.targetKeys.includes(key) ? 1 : 0
+      }).join('')
+    },
+    vennzREMdata(){
+      return vennzREM.posCalc(this.targetHotString)
+    },
+    target(){
+      if (this.targetHotString.length <= 1) {
+        return {x:0,y:0}
+      }
+
+      let {
+        x:_maybeX,
+        y:_maybeY,
+      } = this.vennzREMdata
+
+      let r_size = this.r_size
+      let [maybeX,maybeY] = [_maybeX,_maybeY].map(v=>(+v*(r_size/2))+r_size)
+
+      return {
+        x: maybeX,
+        y: maybeY
+      }
+    }
   }
 }
 </script>
