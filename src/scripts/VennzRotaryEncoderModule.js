@@ -4,7 +4,7 @@ let skmeans = require('skmeans')
 
 let _2PI = Math.PI*2
 
-module.exports = {
+export default {
   min_t : (1/(Math.PI*100)),
   r_size : 500,
   r_cycle(n,i,t) {
@@ -86,12 +86,16 @@ module.exports = {
 
     //幾何中心から最も近い座標を求める
     let [
-      __,
       near_x,
       near_y
     ] = inList
-      .map(([x,y])=>[ (x-mean_x)**2 + (y-mean_y)**2, x, y])
+      .map(([x,y])=>[
+        (x-mean_x)**2 + (y-mean_y)**2,
+        x,
+        y
+      ])
       .sort((a,b)=>a[0]<b[0]? -1: 1)[0]
+      .slice(1)
 
     //幾何中心の座標が大丈夫であれば採用
     //ダメな場合は幾何中心から最も近い座標を採用

@@ -1,0 +1,25 @@
+import commonjs from 'rollup-plugin-commonjs'; // CommonJS モジュールを ES6 に変換
+import vue from 'rollup-plugin-vue'; // .vue 単一ファイルコンポーネントを取得
+import buble from 'rollup-plugin-buble'; // 適切にブラウザをサポートするトランスパイラおよびポリフィル
+import resolve from 'rollup-plugin-node-resolve';
+import babel from 'rollup-plugin-babel';
+
+export default {
+  input: 'src/wrapper.js',
+  output: {
+    name: 'VennzVue',
+    exports: 'named',
+  },
+  plugins: [
+    resolve(),
+    babel({
+      exclude: 'node_modules/**' // only transpile our source code
+    }),
+    commonjs(),
+    vue({
+      css: true, // css を <style> タグとして注入
+      compileTemplate: true, // 明示的にテンプレートを描画関数に変換
+    }),
+    buble(), // ES5 へトランスパイルする
+  ],
+};

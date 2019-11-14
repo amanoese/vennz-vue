@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "npm run build:example && npm run build:lib",
+    "build:example": "vue-cli-service build --dest example",
+    "build:lib": "vue-cli-service build --target lib --name VennzVue ./src/wrapper.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -24,6 +26,12 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "rollup": "^1.27.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-vue": "^5.1.2",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {

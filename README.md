@@ -1,4 +1,7 @@
-# vennz
+# vennz-vue
+
+vennz-vue は、N個のベン図(venn diagram)を描くライブラリです。
+グレイコードを利用したベン図を描きます。
 
 ## Project setup
 ```
@@ -27,3 +30,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Thanks
+[nunuki](https://github.com/nunukim),who discovered basic formula.
