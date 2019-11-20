@@ -9,6 +9,8 @@ export default {
   r_size : 500,
   r_cycle(n,i,t) {
     let diff = (i <= 1) ? Math.sin(t) : Math.cos(2**(i-2)*t);
+    //let diff = (i <= 1) ? Math.tanh(4*Math.PI*Math.sin(t)) : Math.tanh(2*Math.PI*Math.cos(2**(i-2)*t))
+    //let diff = (i <= 1) ? Math.sin(t) : Math.cos(2**(i-2)*t); diff = diff / Math.abs(diff||1)
     return (1 - diff * (1 - (i/(n+1))));
   },
   calc (n,i,t) {
