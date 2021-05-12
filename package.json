@@ -12,7 +12,7 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "jest": "^24.9.0",
-    "mathjs": "^6.2.3",
+    "mathjs": "^7.5.1",
     "skmeans": "^0.11.2",
     "vue": "^2.6.10"
   },
